@@ -30,10 +30,12 @@ export class AiService {
                 }
             ]
         });
-        console.log(result);
-        const {content} = result;
+        const {content, usage} = result;
         if (content[0]?.type === 'text') {
-            return content[0].text;
+            return {
+                text: content[0].text,
+                usage,
+            };
         } else {
             return '';
         }
