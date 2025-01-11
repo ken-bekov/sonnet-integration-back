@@ -5,6 +5,7 @@ import {TemplateService} from "./routers/template/services/template-service";
 import {AiService} from "backend/services/ai-service";
 
 const knex = Knex({
+    dialect: 'mysql2',
     client: 'mysql2',
     pool: {
         max: 5

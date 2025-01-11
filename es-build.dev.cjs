@@ -7,7 +7,7 @@ const child_processes = require('child_process');
         outfile: './dist/ai-integration-backend.js',
         bundle: true,
         platform: 'node',
-        target: 'node18',
+        target: 'node22',
         sourcemap: 'inline',
         external: ['knex'],
         plugins: [
