@@ -12,7 +12,7 @@ const knex = Knex({
     },
     connection: {
         user: process.env.IDM_DB_USER,
-        host: 'localhost',
+        host: process.env.IDM_DB_HOST || 'localhost',
         password: process.env.IDM_DB_PASSWORD,
         database: 'idm',
     }
