@@ -7,4 +7,4 @@ RUN npm run build
 FROM node:22.9.0-alpine
 WORKDIR /app
 COPY --from=build /source/dist/ai-integration-backend.js .
-CMD node ai-integration-backend.js
+CMD ["node",  "ai-integration-backend.js"]
