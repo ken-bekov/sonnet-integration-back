@@ -10,6 +10,7 @@ const child_processes = require('child_process');
         target: 'node22',
         sourcemap: 'inline',
         external: ['knex'],
+        format: 'cjs',
         plugins: [
             {
                 name: 'rebuildPlugin',

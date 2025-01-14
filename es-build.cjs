@@ -7,7 +7,7 @@ const esBuild = require('esbuild');
         bundle: true,
         platform: 'node',
         target: 'node22',
-        format: 'esm',
+        format: 'cjs',
         external: ['better-sqlite3', 'sqlite3', 'pg', 'oracledb', 'mysql', 'tedious', 'pg-query-stream'],
         packages: 'external',
         minify: true,
