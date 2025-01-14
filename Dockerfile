@@ -9,4 +9,4 @@ WORKDIR /app
 COPY --from=build /source/dist/ai-integration-backend.js .
 COPY --from=build /source/package.json .
 RUN npm install
-CMD ["node",  "ai-integration-backend.js"]
+CMD ["node",  "ai-integration-backend.js", "migrate"]
