@@ -1,16 +1,12 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
-import { appContext } from './app-context';
-import pino from 'pino';
-import pretty from 'pino-pretty';
+import {appContext, logger} from './app-context';
 import { NextFunction, Request, Response } from 'express-serve-static-core';
 import {corsHandler} from "./middlewares/cors-handler";
 import { structureRouter } from './routers/structure-router';
 import { templateRouter } from './routers/template-router';
 import { aiRouter } from './routers/ai-router';
-
-const logger = pino({level: process.env.APP_LOG_LEVEL || 'error'}, pretty());
 
 function initApp() {
     const app = express();
@@ -45,10 +41,27 @@ if (!process.env.APP_PORT) {
     process.exit(0);
 }
 
+async function applyMigrations() {
+    const {knex} = appContext;
+    try {
+        await knex.migrate.latest({directory: `${__dirname}/../migrations`});
+        logger.info(`All migrations are applied`);
+    } catch (error: any) {
+        logger.error(`Couldn't apply migrations. Reason: ${error.message}`);
+        process.exit(0);
+    }
+}
+
 (async () => {
+    if (process.argv.includes('migrate')) {
+        await applyMigrations();
+    } else {
+        logger.info('Migrations are skipped');
+    }
+
     const app = initApp();
     app.listen(
         process.env.APP_PORT,
-        () => console.log(`Application is listening on ${process.env.APP_PORT}`)
+        () => logger.info(`Application is listening on ${process.env.APP_PORT}`)
     );
 })();

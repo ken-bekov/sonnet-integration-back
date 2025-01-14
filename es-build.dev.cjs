@@ -32,7 +32,7 @@ const child_processes = require('child_process');
         ]
     });
     await context.watch();
-    await child_processes
+    child_processes
         .spawn(
             'node',
             ['--watch', '--enable-source-maps', '--inspect=7070', './dist/ai-integration-backend.js'],

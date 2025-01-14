@@ -3,6 +3,13 @@ import { Model } from 'objection';
 import { StructureService } from './services/structure-service';
 import {TemplateService} from "./routers/template/services/template-service";
 import {AiService} from "@backend/services/ai-service";
+import pino from "pino";
+import pretty from "pino-pretty";
+
+export const logger = pino(
+    {level: process.env.APP_LOG_LEVEL || 'info', timestamp: false},
+    pretty({translateTime: 'UTC:yyyy-mm-dd HH:MM:ss.l'})
+);
 
 const knex = Knex({
     dialect: 'mysql2',
