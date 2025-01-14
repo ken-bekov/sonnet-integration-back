@@ -1,6 +1,6 @@
 import express from 'express';
-import {appContext} from 'backend/app-context';
-import { asyncHandler } from 'backend/middlewares/async-handler';
+import {appContext} from '@backend/app-context';
+import { asyncHandler } from '@backend/middlewares/async-handler';
 
 export const structureRouter = express.Router();
 

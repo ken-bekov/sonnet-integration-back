@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
-import {appContext} from "backend/app-context";
-import {Trend} from "backend/db-models/db-models";
+import {appContext} from "@backend/app-context";
+import {Trend} from "@backend/db-models/db-models";
 
 export async function loadTrends(nameId: string) {
     const {knex} = appContext;

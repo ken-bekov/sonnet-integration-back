@@ -1,7 +1,7 @@
 import express from "express";
-import {asyncHandler} from "backend/middlewares/async-handler";
-import {appContext} from "backend/app-context";
-import {AIQueryTemplate} from "backend/db-models/db-models";
+import {asyncHandler} from "@backend/middlewares/async-handler";
+import {appContext} from "@backend/app-context";
+import {AIQueryTemplate} from "@backend/db-models/db-models";
 
 export const templateRouter = express.Router();
 

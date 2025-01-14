@@ -1,4 +1,4 @@
-import {Company, Minion} from "backend/db-models/db-models";
+import {Company, Minion} from "@backend/db-models/db-models";
 
 export class StructureService {
     async getClientsTree() {

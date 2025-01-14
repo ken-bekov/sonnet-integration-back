@@ -1,6 +1,6 @@
 import Handlebars from "handlebars";
 import {loadTrends} from "./value-providers/trend-provider";
-import {AIQueryTemplate} from "backend/db-models/db-models";
+import {AIQueryTemplate} from "@backend/db-models/db-models";
 
 export class TemplateService {
     async processTemplate(templateContent: string, context: object) {

@@ -2,7 +2,7 @@ import Knex from 'knex';
 import { Model } from 'objection';
 import { StructureService } from './services/structure-service';
 import {TemplateService} from "./routers/template/services/template-service";
-import {AiService} from "backend/services/ai-service";
+import {AiService} from "@backend/services/ai-service";
 
 const knex = Knex({
     dialect: 'mysql2',

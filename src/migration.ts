@@ -1,4 +1,4 @@
-import {appContext} from "backend/app-context";
+import {appContext} from "@backend/app-context";
 import pino from "pino";
 import pretty from "pino-pretty";
 const logger = pino({level: process.env.APP_LOG_LEVEL || 'error'}, pretty());
