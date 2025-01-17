@@ -10,7 +10,10 @@ export async function loadTrends(
     const {knex} = appContext;
     const [trends] = await knex.raw(`
         select
-            from_unixtime((truncate (date / 600000, 0) * 600000) / 1000) as time, avg(avg) avg, avg(min) min, avg(max) max
+            from_unixtime((truncate (date / 600000, 0) * 600000) / 1000) as time, 
+            round(avg(avg), 2) avg, 
+            round(avg(min), 2) min, 
+            round(avg(max), 2) max
         from trends
         where date(from_unixtime(date / 1000)) between '${fromDate}' and '${toDate}' and name_id = ${nameId}
         group by from_unixtime((truncate (date / 600000, 0) * 600000) / 1000);

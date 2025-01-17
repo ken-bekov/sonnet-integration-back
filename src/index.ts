@@ -2,11 +2,11 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import {appContext, logger} from './app-context';
-import { NextFunction, Request, Response } from 'express-serve-static-core';
 import {corsHandler} from "./middlewares/cors-handler";
 import { structureRouter } from './routers/structure-router';
 import { templateRouter } from './routers/template-router';
 import { aiRouter } from './routers/ai-router';
+import {errorHandler} from "@backend/middlewares/error-handler";
 
 function initApp() {
     const app = express();
@@ -21,18 +21,8 @@ function initApp() {
     app.use('/ai', aiRouter);
     app.set('context', appContext);
 
-    app.use((
-        error: Error,
-        request: Request,
-        response: Response,
-        next: NextFunction,
-    ): void => {
-        logger.error(error);
-        response.status(500).json({
-            status: 'error',
-            message: 'Internal Server Error. See server logs for more information',
-        })
-    })
+    app.use(errorHandler());
+
     return app;
 }
 
