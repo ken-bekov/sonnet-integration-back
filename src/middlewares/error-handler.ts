@@ -8,7 +8,7 @@ export function errorHandler() {
         response: Response,
         next: NextFunction,
     ) => {
-        logger.error(JSON.stringify(error));
+        logger.error(error);
 
         response.status(500).json({
             status: 'error',

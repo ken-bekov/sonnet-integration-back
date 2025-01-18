@@ -11,7 +11,7 @@ import {errorHandler} from "@backend/middlewares/error-handler";
 function initApp() {
     const app = express();
 
-    app.use(bodyParser.json());
+    app.use(bodyParser.json({limit: '2mb'}));
     app.use(helmet({
         contentSecurityPolicy: false,
     }));
