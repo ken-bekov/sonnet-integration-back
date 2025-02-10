@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express-serve-static-core";
-import {logger} from "@backend/app-context";
+import {logger} from "@backend/logger";
 
 export function errorHandler() {
     return (

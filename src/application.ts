@@ -1,12 +1,15 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
-import {appContext, logger} from './app-context';
+import {appContext} from './app-context';
 import {corsHandler} from "./middlewares/cors-handler";
-import { structureRouter } from './routers/structure-router';
+import { router as structureRouter } from './routers/structure-router';
 import { templateRouter } from './routers/template-router';
 import { aiRouter } from './routers/ai-router';
 import {errorHandler} from "@backend/middlewares/error-handler";
+import {applyMigrations} from "@backend/knex-instance";
+import {logger} from "@backend/logger";
+import {router as queryRouter} from "@backend/routers/request-router";
 
 function initApp() {
     const app = express();
@@ -19,6 +22,7 @@ function initApp() {
     app.use('/structure', structureRouter);
     app.use('/template', templateRouter);
     app.use('/ai', aiRouter);
+    app.use('/query', queryRouter);
     app.set('context', appContext);
 
     app.use(errorHandler());
@@ -28,18 +32,7 @@ function initApp() {
 
 if (!process.env.APP_PORT) {
     logger.error('Env variable process.env.APP_PORT is not set');
-    process.exit(0);
-}
-
-async function applyMigrations() {
-    const {knex} = appContext;
-    try {
-        await knex.migrate.latest({directory: `${__dirname}/../migrations`});
-        logger.info(`All migrations are applied`);
-    } catch (error: any) {
-        logger.error(`Couldn't apply migrations. Reason: ${error.message}`);
-        process.exit(0);
-    }
+    process.exit(1);
 }
 
 (async () => {

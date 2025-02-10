@@ -7,7 +7,7 @@ export const corsHandler = () => (
 ) => {
     if (request.method === 'OPTIONS' && request.get('Access-Control-Request-Method')) {
         response.set('Access-Control-Allow-Origin', '*');
-        response.set('Access-Control-Allow-Methods', 'GET, POST, UPDATE, PUT');
+        response.set('Access-Control-Allow-Methods', 'GET, POST, UPDATE, PUT, DELETE');
         response.set('Access-Control-Allow-Headers', '*');
         response.set('Access-Control-Max-Age', '3600');
         response.sendStatus(204);

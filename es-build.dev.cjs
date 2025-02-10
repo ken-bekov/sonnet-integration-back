@@ -3,8 +3,8 @@ const child_processes = require('child_process');
 
 (async () => {
     const context = await esbuild.context({
-        entryPoints: ['./src/index.ts'],
-        outfile: './dist/ai-integration-backend.js',
+        entryPoints: ['./src/application.ts', './src/request-worker.ts'],
+        outdir: './dist',
         bundle: true,
         platform: 'node',
         target: 'node22',
@@ -36,7 +36,7 @@ const child_processes = require('child_process');
     child_processes
         .spawn(
             'node',
-            ['--watch', '--enable-source-maps', '--inspect=7070', './dist/ai-integration-backend.js'],
+            ['--watch', '--enable-source-maps', '--inspect=7070', './dist/application.js'],
             {
                 env: {
                     APP_PORT: 9090,

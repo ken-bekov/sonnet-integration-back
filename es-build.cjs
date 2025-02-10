@@ -2,8 +2,8 @@ const esBuild = require('esbuild');
 
 (async () => {
     await esBuild.build({
-        entryPoints: ['./src/index.ts'],
-        outfile: './dist/ai-integration-backend.js',
+        entryPoints: ['./src/application.ts', './src/request-worker.ts'],
+        outdir: './dist',
         bundle: true,
         platform: 'node',
         target: 'node22',

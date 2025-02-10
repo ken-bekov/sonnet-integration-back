@@ -7,7 +7,8 @@ RUN npm run build
 FROM node:22.9.0-alpine
 COPY --from=build /source/migrations/ /migrations
 WORKDIR /app
-COPY --from=build /source/dist/ai-integration-backend.js .
+COPY --from=build /source/dist/application.js .
+COPY --from=build /source/dist/request-worker.js .
 COPY --from=build /source/package.json .
 RUN npm install
-CMD ["node",  "ai-integration-backend.js", "migrate"]
+CMD ["node",  "application.js", "migrate"]

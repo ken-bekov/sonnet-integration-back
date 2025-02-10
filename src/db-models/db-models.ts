@@ -99,8 +99,9 @@ export class Trend extends Model {
     public max: number = 0;
 }
 
-export class AIQueryTemplate extends Model {
+export class AiQueryTemplate extends Model {
     static get tableName() { return 'ai_query_templates' }
+    public name: string = '';
     public id?: number = 0;
     public agent_id: number = 0;
     public text: string = '';

@@ -20,15 +20,13 @@ export class AiService {
         const result = await this.client.messages.create({
             model: 'claude-3-5-sonnet-latest',
             max_tokens: this.maxTokens,
-            messages: [
-                {
-                    role: 'user',
-                    content: [{
-                        type: 'text',
-                        text,
-                    }]
-                }
-            ]
+            messages: [{
+                role: 'user',
+                content: [{
+                    type: 'text',
+                    text,
+                }]
+            }]
         });
         const {content, usage} = result;
         if (content[0]?.type === 'text') {
@@ -37,7 +35,7 @@ export class AiService {
                 usage,
             };
         } else {
-            return '';
+            return null;
         }
     }
 }

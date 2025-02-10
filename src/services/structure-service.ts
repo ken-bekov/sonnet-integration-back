@@ -1,4 +1,4 @@
-import {Company, Minion} from "@backend/db-models/db-models";
+import {Agent, Company, Minion} from "@backend/db-models/db-models";
 
 export class StructureService {
     async getClientsTree() {
@@ -32,6 +32,10 @@ export class StructureService {
             .withGraphFetched('trendNames')
             .withGraphFetched('type')
             .where('agent_id', agentId);
+    }
+
+    async getAgent(agentId: number) {
+        return Agent.query().findOne('id', '=', agentId);
     }
 }
 
