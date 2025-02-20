@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import {appContext} from "@backend/app-context";
-import {Trend} from "@backend/db-models/db-models";
+
+import {Trend} from "@backend/db-models/metrics";
 
 export async function loadTrends(
     nameId: string,

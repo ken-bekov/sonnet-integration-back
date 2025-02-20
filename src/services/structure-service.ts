@@ -30,6 +30,8 @@ export class StructureService {
     async getMinionsByAgentId(agentId: string) {
         return Minion.query()
             .withGraphFetched('trendNames')
+            .withGraphFetched('independentMalfunctions')
+            .withGraphFetched('dependentMalfunctions')
             .withGraphFetched('type')
             .where('agent_id', agentId);
     }
@@ -38,6 +40,3 @@ export class StructureService {
         return Agent.query().findOne('id', '=', agentId);
     }
 }
-
-
-

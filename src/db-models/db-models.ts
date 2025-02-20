@@ -1,4 +1,5 @@
-import { Model } from 'objection';
+import {Model} from 'objection';
+import {FrequencyMalfunction, NoFrequencyMalfunction} from "@backend/db-models/metrics";
 
 export class MinionType extends Model {
     static get tableName() { return 'minion_types' }
@@ -26,6 +27,22 @@ export class Minion extends Model {
             join: {
                 from: 'minions.id',
                 to: 'trend_names.minion_id',
+            }
+        },
+        dependentMalfunctions: {
+            relation: Model.HasManyRelation,
+            modelClass: FrequencyMalfunction,
+            join: {
+                from: 'minions.id',
+                to: 'message_dependent.minion_id',
+            }
+        },
+        independentMalfunctions: {
+            relation: Model.HasManyRelation,
+            modelClass: NoFrequencyMalfunction,
+            join: {
+                from: 'minions.id',
+                to: 'message_independent.minion_id',
             }
         }
     }
@@ -91,13 +108,7 @@ export class Company extends Model {
     }
 }
 
-export class Trend extends Model {
-    static get tableName() { return 'trends' }
-    public time: number = 0;
-    public avg: number = 0;
-    public min: number = 0;
-    public max: number = 0;
-}
+
 
 export class AiQueryTemplate extends Model {
     static get tableName() { return 'ai_query_templates' }
