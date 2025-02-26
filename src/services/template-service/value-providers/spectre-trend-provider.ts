@@ -22,24 +22,22 @@ export async function loadSpectreTrends(
         return '';
     }
 
+    const intervalInMs = 30 * 60 * 1000;
+
     const [spectreTrends] = await knex.raw(`
         select
-            from_unixtime((truncate (date / 600000, 0) * 600000) / 1000) as time, 
-            round(avg(avg), 2) avg, 
-            round(avg(min), 2) min, 
-            round(avg(max), 2) max
+            from_unixtime((truncate (date / ${intervalInMs}, 0) * ${intervalInMs}) / 1000) as time, 
+            round(avg(avg), 2) avg 
         from trend_specters_copy1
         where 
             date between 
                 unix_timestamp('${fromDate} 00:00:00') * 1000 and unix_timestamp('${toDate} 23:59:59') * 1000
             and name_id = ${spectreTrendName.$id()}
-        group by from_unixtime((truncate (date / 600000, 0) * 600000) / 1000);
+        group by from_unixtime((truncate (date / ${intervalInMs}, 0) * ${intervalInMs}) / 1000);
     `);
-
-    console.log(spectreTrends);
 
     return spectreTrends
         .map((trend: SpectreTrend) =>
-            `${dayjs(trend.time).format('DD-MM-YYYY HH:mm:ss')}, ${trend.avg}, ${trend.min}, ${trend.max}`
+            `${dayjs(trend.time).format('DD-MM-YYYY HH:mm:ss')}, ${trend.avg}`
         ).join('\n');
 }
