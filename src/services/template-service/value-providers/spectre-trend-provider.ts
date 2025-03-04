@@ -22,8 +22,7 @@ export async function loadSpectreTrends(
     if (!spectreTrendName) {
         return '';
     }
-
-    console.log(intervalInMins);
+    
     const intervalInMs = intervalInMins * 60 * 1000;
 
     const [spectreTrends] = await knex.raw(`

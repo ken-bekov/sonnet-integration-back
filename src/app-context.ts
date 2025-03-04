@@ -10,9 +10,14 @@ Model.knex(knexInstance);
 const structureService = new StructureService();
 const templateService = new TemplateService();
 const aiRequestService = new AiRequestService();
+
+const maxTokens = process.env.IDM_SONNET_RESPONSE_MAX_TOKEN
+    ? +process.env.IDM_SONNET_RESPONSE_MAX_TOKEN
+    : 2048;
+
 const aiService = new AiService({
     apiKey: process.env.IDM_SONNET_API_KEY || '',
-    maxTokens: 1024,
+    maxTokens,
 });
 
 export interface AppContext {
