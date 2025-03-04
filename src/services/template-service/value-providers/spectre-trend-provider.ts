@@ -6,6 +6,7 @@ export async function loadSpectreTrends(
     malfunctionId: string,
     fromDate: string = '2024-11-01',
     toDate: string = '2024-11-07',
+    intervalInMins: number = 30,
 ) {
     const {knex} = appContext;
     const malfunction = await FrequencyMalfunction.query().where({id: malfunctionId}).first();
@@ -22,7 +23,8 @@ export async function loadSpectreTrends(
         return '';
     }
 
-    const intervalInMs = 30 * 60 * 1000;
+    console.log(intervalInMins);
+    const intervalInMs = intervalInMins * 60 * 1000;
 
     const [spectreTrends] = await knex.raw(`
         select
