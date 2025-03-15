@@ -10,5 +10,5 @@ WORKDIR /app
 COPY --from=build /source/dist/application.js .
 COPY --from=build /source/dist/request-worker.js .
 COPY --from=build /source/package.json .
-RUN npm install
+RUN npm install --production
 CMD ["node",  "application.js", "migrate"]

@@ -2,6 +2,7 @@ import Handlebars from "handlebars";
 import {loadTrends} from "./value-providers/trend-provider";
 import {AiQueryTemplate} from "@backend/db-models/db-models";
 import {loadSpectreTrends} from "@backend/services/template-service/value-providers/spectre-trend-provider";
+import {daysAgoToDateHelper} from "@backend/services/template-service/helpers/days-ago-to-date-helper";
 
 const createAsyncHelper = (
     providerFunc: Function,
@@ -34,6 +35,7 @@ export class TemplateService {
             helpers: {
                 'trend': createAsyncHelper(loadTrends, asyncValues, promises),
                 'spectre-trend': createAsyncHelper(loadSpectreTrends, asyncValues, promises),
+                'daysAgoToDate': daysAgoToDateHelper,
             }
         }
 
@@ -41,10 +43,6 @@ export class TemplateService {
         template(context, options);
         await Promise.all(promises);
         return template(context, options);
-    }
-
-    async processTemplateSet(templateContent: AiQueryTemplate[], context: object) {
-
     }
 
     async loadTemplates(query: Partial<AiQueryTemplate>) {
