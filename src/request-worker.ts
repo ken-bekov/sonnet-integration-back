@@ -85,5 +85,9 @@ const run = async (agentId: number) => {
 (async () => {
     const {agentId} = workerData;
     console.log(`Running worker for agent with id ${agentId}`);
-    await run(agentId);
+    try {
+        await run(agentId);
+    } catch (error: any) {
+        console.log(error.message);
+    }
 })();
