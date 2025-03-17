@@ -3,6 +3,7 @@ import {appContext} from "@backend/app-context";
 import {buildGraphs, GraphNode} from "@backend/services/request-service/graph";
 import {AiRequest} from "@backend/db-models/ai-request";
 import {workerData} from "node:worker_threads";
+import {logger} from "@backend/logger";
 
 const logGraphNode = (node: GraphNode<AiQueryTemplate>, level = 0) => {
     console.log(`${'-'.repeat(level)}${node.value.name}`);
@@ -77,6 +78,7 @@ const run = async (agentId: number) => {
     }
 
     const requestGraphs = await getRequestGraphs(agentId);
+    logger.debug(`Request Graphs ${JSON.stringify(requestGraphs)}`);
     requestGraphs.forEach(node => {
         processGraphNode(node);
     });
