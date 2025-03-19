@@ -45,7 +45,7 @@ export class TemplateService {
         return template(context, options);
     }
 
-    async loadTemplates(query: Partial<AiQueryTemplate>) {
+    async loadTemplates(query: Partial<AiQueryTemplate>): Promise<AiQueryTemplate[]> {
         return AiQueryTemplate.query().where(query);
     }
 

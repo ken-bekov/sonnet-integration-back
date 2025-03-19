@@ -5,13 +5,6 @@ import {AiRequest} from "@backend/db-models/ai-request";
 import {workerData} from "node:worker_threads";
 import {logger} from "@backend/logger";
 
-const logGraphNode = (node: GraphNode<AiQueryTemplate>, level = 0) => {
-    console.log(`${'-'.repeat(level)}${node.value.name}`);
-    node.children.forEach(child => {
-        logGraphNode(child, level + 1);
-    })
-}
-
 const createNewRequestSet = async (agentId: number) => {
     const {aiRequestService} = appContext;
     return aiRequestService.saveRequestSet({agent_id: agentId});
@@ -24,10 +17,7 @@ const getTagForTemplate = (template: AiQueryTemplate) => {
 const getRequestGraphs = async (agentId: number) => {
     const {templateService} = appContext;
     const templates = await templateService.loadTemplates({agent_id: agentId});
-    return buildGraphs(
-        templates,
-        (referrer, template) => !!referrer.text?.includes(`{{${getTagForTemplate(template)}}}`),
-    )
+    return buildGraphs(templates);
 }
 
 const saveRequest = async (request: Partial<AiRequest>) => {
@@ -79,7 +69,7 @@ const run = async (agentId: number) => {
 
     const requestGraphs = await getRequestGraphs(agentId);
     logger.debug(`Request Graphs ${JSON.stringify(requestGraphs)}`);
-    requestGraphs.forEach(node => {
+    requestGraphs.forEach((node: GraphNode<AiQueryTemplate>) => {
         processGraphNode(node);
     });
 }
