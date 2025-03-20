@@ -1,9 +1,5 @@
 import {AiQueryTemplate} from "@backend/db-models/db-models";
 
-interface CheckReferFunc <T>{
-    (referrer:T, item: T ): boolean;
-}
-
 export interface GraphNode <T> {
     value: T;
     children: GraphNode<T>[];
@@ -27,15 +23,15 @@ const checkForCycleRef = (root: GraphNode<AiQueryTemplate>) => {
     const check = (node: GraphNode<AiQueryTemplate>, path: string) => {
         for (const child of node.children) {
             if (root === child) {
-                throw new Error(`Cycle reference detected ${path}->${child.value.id}`);
+                throw new Error(`Cycle reference detected ${path}->${child.value.name}`);
             } else {
                 visitedNodes.add(child);
-                check(child, `${path}->${child.value.id}`);
+                check(child, `${path}->${child.value.name}`);
             }
         }
     }
 
-    check(root, `${root.value.id}`);
+    check(root, `${root.value.name}`);
 }
 
 export const buildGraphs = (templates:AiQueryTemplate[]): GraphNode<AiQueryTemplate>[] => {
@@ -49,7 +45,7 @@ export const buildGraphs = (templates:AiQueryTemplate[]): GraphNode<AiQueryTempl
     for (const node of nodes) {
         const refs = extractRefs(node.value.text);
         for (const ref of refs) {
-            const childNode = nodes.find(childNode => `{{query_${childNode.value.text}}}` === ref);
+            const childNode = nodes.find(childNode => `{{query_${childNode.value.id}}}` === ref);
             if (childNode) {
                 node.children.push(childNode);
                 checkForCycleRef(childNode);

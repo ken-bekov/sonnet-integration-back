@@ -27,7 +27,7 @@ export class AiRequestService {
 
     async saveRequestSet(requestSet: Partial<AiRequestSet>) {
         if(requestSet.id) {
-            return AiRequestSet.query().updateAndFetch(requestSet);
+            return AiRequestSet.query().patchAndFetchById(requestSet.id, requestSet);
         } else {
             return AiRequestSet.query().insertAndFetch(requestSet);
         }

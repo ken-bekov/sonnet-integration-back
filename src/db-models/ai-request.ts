@@ -24,6 +24,8 @@ export class AiRequestSet extends Model{
 
     public id?: number;
     public agent_id: number = 0;
+    public state: string = '';
+    public error: string = '';
 
     static relationMappings = {
         requests: {

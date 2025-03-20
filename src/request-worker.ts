@@ -5,11 +5,6 @@ import {AiRequest} from "@backend/db-models/ai-request";
 import {workerData} from "node:worker_threads";
 import {logger} from "@backend/logger";
 
-const createNewRequestSet = async (agentId: number) => {
-    const {aiRequestService} = appContext;
-    return aiRequestService.saveRequestSet({agent_id: agentId});
-}
-
 const getTagForTemplate = (template: AiQueryTemplate) => {
     return `query_${template.id}`;
 }
@@ -20,57 +15,72 @@ const getRequestGraphs = async (agentId: number) => {
     return buildGraphs(templates);
 }
 
-const saveRequest = async (request: Partial<AiRequest>) => {
-    const {aiRequestService} = appContext;
+const processGraphNode = async (
+    node: GraphNode<AiQueryTemplate>,
+    setId: number,
+    context: Record<string, string>,
+) => {
+    const {aiService, templateService, aiRequestService} = appContext;
+
+    for (const child of node.children) {
+        const template = child.value;
+        const isAlreadyDone = !!context[getTagForTemplate(template)];
+        if (!template.text || isAlreadyDone) {
+            continue;
+        }
+
+        await processGraphNode(child, setId, context);
+    }
+
+    const template = node.value;
+    const request: Partial<AiRequest> = {
+        request_set_id: setId,
+        name: template.name,
+        template: template.text,
+        response: '',
+        error: '',
+    }
+
+    try {
+        const prompt = await templateService.processTemplate(template.text, context);
+        request.prompt = prompt;
+
+        const response = await aiService.sendMessage(prompt);
+        context[getTagForTemplate(template)] = response?.text || '';
+        if (response) {
+            request.response = response.text;
+            request.state = 'done';
+        }
+    } catch (error: any) {
+        request.state = 'error';
+        request.error = error.message;
+    }
     await aiRequestService.saveRequest(request);
 }
 
 const run = async (agentId: number) => {
-    const requestSet = await createNewRequestSet(agentId);
-
-    const {aiService, templateService} = appContext;
+    const {aiRequestService} = appContext;
+    const requestSet = await aiRequestService.saveRequestSet({agent_id: agentId, state: 'processing'});
     const context: Record<string, string> = {};
-    const processGraphNode = async (node: GraphNode<AiQueryTemplate>) => {
-        for (const child of node.children) {
-            const template = child.value;
-            const isAlreadyDone = !!context[getTagForTemplate(template)];
-            if (!template.text || isAlreadyDone) {
-                continue;
-            }
 
-            await processGraphNode(child);
+    try {
+        const rootNodes = await getRequestGraphs(agentId);
+        for (const node of rootNodes) {
+            await processGraphNode(node, requestSet.id!, context);
         }
-
-        const template = node.value;
-        const request: Partial<AiRequest> = {
-            request_set_id: requestSet.id,
-            name: template.name,
-            template: template.text,
-            response: '',
-            error: '',
-        }
-
-        try {
-            const prompt = await templateService.processTemplate(template.text, context);
-            request.prompt = prompt;
-
-            const response = await aiService.sendMessage(prompt);
-            context[getTagForTemplate(template)] = response?.text || '';
-            if (response) {
-                request.response = response.text;
-                request.state = 'done';
-            }
-        } catch (error: any) {
-            request.state = 'error';
-            request.error = error.message;
-        }
-        await saveRequest(request);
+    } catch (error: any) {
+        logger.error(error.message);
+        aiRequestService.saveRequestSet({
+            ...requestSet,
+            state: 'error',
+            error: error.message,
+        });
+        return;
     }
 
-    const requestGraphs = await getRequestGraphs(agentId);
-    logger.debug(`Request Graphs ${JSON.stringify(requestGraphs)}`);
-    requestGraphs.forEach((node: GraphNode<AiQueryTemplate>) => {
-        processGraphNode(node);
+    aiRequestService.saveRequestSet({
+        ...requestSet,
+        state: 'done',
     });
 }
 
