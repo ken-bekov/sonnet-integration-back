@@ -8,6 +8,7 @@ const createAsyncHelper = (
     providerFunc: Function,
     valuesCache: Record<string, any>,
     promises: Promise<any>[],
+    agentId: number
 ) => {
     return (...args: any[]) => {
         const context = args[args.length - 1];
@@ -16,6 +17,9 @@ const createAsyncHelper = (
         if (valuesCache[valueId]) {
             return valuesCache[valueId];
         }
+        
+        args.splice(3, 0, agentId);
+
         const promise = providerFunc(...args).then((result: any) => valuesCache[valueId] = result);
         promises.push(promise);
         return null;
@@ -23,7 +27,7 @@ const createAsyncHelper = (
 }
 
 export class TemplateService {
-    async processTemplate(templateContent: string, context: object) {
+    async processTemplate(templateContent: string, context: object, agentId: number) {
         if (!templateContent) {
             return '';
         }
@@ -33,8 +37,8 @@ export class TemplateService {
 
         const options = {
             helpers: {
-                'trend': createAsyncHelper(loadTrends, asyncValues, promises),
-                'spectre-trend': createAsyncHelper(loadSpectreTrends, asyncValues, promises),
+                'trend': createAsyncHelper(loadTrends, asyncValues, promises, agentId),
+                'spectre-trend': createAsyncHelper(loadSpectreTrends, asyncValues, promises, agentId),
                 'daysAgoToDate': daysAgoToDateHelper,
             }
         }

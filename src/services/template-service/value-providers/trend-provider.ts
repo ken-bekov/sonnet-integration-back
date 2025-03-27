@@ -7,15 +7,20 @@ export async function loadTrends(
     nameId: string,
     fromDate: string = '2024-11-01',
     toDate: string = '2024-11-07',
+    agentId: string,
 ) {
     const {knex} = appContext;
     const intervalInMs = 30 * 60 * 1000;
+
+    const minion = await knex('minions').where({ agent_id: agentId, type_id: 1 }).first();
+    const minionId = minion?.id;
+
     const [trends] = await knex.raw(`
         select
             from_unixtime((truncate (date / ${intervalInMs}, 0) * ${intervalInMs}) / 1000) as time, 
             round(avg(avg), 2) avg 
         from trends
-        where date(from_unixtime(date / 1000)) between '${fromDate}' and '${toDate}' and name_id = ${nameId}
+        where minion_id = ${minionId} and date(from_unixtime(date / 1000)) between '${fromDate}' and '${toDate}' and name_id = ${nameId}
         group by from_unixtime((truncate (date / ${intervalInMs}, 0) * ${intervalInMs}) / 1000);
     `);
 
