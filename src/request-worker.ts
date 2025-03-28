@@ -19,6 +19,7 @@ const processGraphNode = async (
     node: GraphNode<AiQueryTemplate>,
     setId: number,
     context: Record<string, string>,
+    agentId: Number,
 ) => {
     const {aiService, templateService, aiRequestService} = appContext;
 
@@ -29,7 +30,7 @@ const processGraphNode = async (
             continue;
         }
 
-        await processGraphNode(child, setId, context);
+        await processGraphNode(child, setId, context, agentId);
     }
 
     const template = node.value;
@@ -55,7 +56,9 @@ const processGraphNode = async (
         request.state = 'error';
         request.error = error.message;
     }
+
     await aiRequestService.saveRequest(request);
+    await aiRequestService.savePDF(agentId);
 }
 
 const run = async (agentId: number) => {
@@ -66,7 +69,7 @@ const run = async (agentId: number) => {
     try {
         const rootNodes = await getRequestGraphs(agentId);
         for (const node of rootNodes) {
-            await processGraphNode(node, requestSet.id!, context);
+            await processGraphNode(node, requestSet.id!, context, agentId);
         }
     } catch (error: any) {
         logger.error(error.message);

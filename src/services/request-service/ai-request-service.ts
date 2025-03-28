@@ -1,6 +1,8 @@
 import {AiRequest, AiRequestSet} from "@backend/db-models/ai-request";
 import {Worker} from "node:worker_threads";
 import {logger} from "@backend/logger";
+import {loadReport} from "./../template-service/value-providers/ai-provider";
+import {generatePDF} from "./../pdf-service.ts";
 
 export class AiRequestService {
     constructor() {
@@ -45,5 +47,25 @@ export class AiRequestService {
         return AiRequestSet
             .query().where('agent_id', agentId)
             .withGraphFetched('requests');
+    }
+
+    async savePDF(agentId: number) {
+        const requestSet = await AiRequestSet.query()
+            .where('agent_id', agentId)
+            .where('state', 'done')
+            .first();
+
+        if (!requestSet) {
+            return { message: 'No request set found' };
+        }
+
+        if (requestSet?.id !== undefined) {
+            const report = await loadReport(requestSet.id);
+            const fileName = `report_${agentId}.pdf`;
+
+            await generatePDF({title: report.name, content: report.prompt, fileName: fileName });
+        } else {
+            console.log('Report not found');
+        }
     }
 }

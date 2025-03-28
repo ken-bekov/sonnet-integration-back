@@ -10,6 +10,7 @@ import {errorHandler} from "@backend/middlewares/error-handler";
 import {applyMigrations} from "@backend/knex-instance";
 import {logger} from "@backend/logger";
 import {router as queryRouter} from "@backend/routers/request-router";
+import {downloadPDF} from './services/pdf-service'
 
 function initApp() {
     const app = express();
@@ -24,6 +25,8 @@ function initApp() {
     app.use('/ai', aiRouter);
     app.use('/query', queryRouter);
     app.set('context', appContext);
+
+    app.get('/download/:fileName', downloadPDF);
 
     app.use(errorHandler());
 
