@@ -56,7 +56,9 @@ const processGraphNode = async (
         request.state = 'error';
         request.error = error.message;
     }
+
     await aiRequestService.saveRequest(request);
+    await aiRequestService.savePDF(agentId);
 }
 
 const run = async (agentId: number) => {
