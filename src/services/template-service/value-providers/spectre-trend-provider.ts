@@ -31,9 +31,12 @@ export async function loadSpectreTrends(
             round(avg(avg), 2) avg 
         from trend_specters_copy1
         where 
+            minion_id = ${malfunction.minion_id}
+        and 
             date between 
                 unix_timestamp('${fromDate} 00:00:00') * 1000 and unix_timestamp('${toDate} 23:59:59') * 1000
-            and name_id = ${spectreTrendName.$id()}
+        and 
+            name_id = ${spectreTrendName.$id()}
         group by from_unixtime((truncate (date / ${intervalInMs}, 0) * ${intervalInMs}) / 1000);
     `);
 
