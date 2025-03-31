@@ -44,6 +44,14 @@ export class Minion extends Model {
                 from: 'minions.id',
                 to: 'message_independent.minion_id',
             }
+        },
+        trendSpecterNames: {
+            relation: Model.HasManyRelation,
+            modelClass: NoFrequencyMalfunction,
+            join: {
+                from: 'minions.id',
+                to: 'trend_specter_names.minion_id',
+            }
         }
     }
 }

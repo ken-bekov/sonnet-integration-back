@@ -32,6 +32,7 @@ export class StructureService {
             .withGraphFetched('trendNames')
             .withGraphFetched('independentMalfunctions')
             .withGraphFetched('dependentMalfunctions')
+            .withGraphFetched('trendSpecterNames')
             .withGraphFetched('type')
             .where('agent_id', agentId);
     }
